@@ -1,136 +1,83 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:isolate';
-import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:chapter_one/AppColors.dart';
+import 'package:chapter_one/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 void main() {
-  runApp(const SampleApp());
+  runApp(const MyApp());
 }
 
-class SampleApp extends StatelessWidget {
-  const SampleApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Sample App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const SampleAppPage(),
-    );
+        title: 'Sample App',
+        debugShowCheckedModeBanner: true,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const Login());
   }
 }
 
-class SampleAppPage extends StatefulWidget {
-  const SampleAppPage({super.key});
-
-  @override
-  State<SampleAppPage> createState() => _SampleAppPageState();
-}
-
-class _SampleAppPageState extends State<SampleAppPage> {
-  List widgets = [];
-
-  @override
-  void initState() {
-    super.initState();
-    loadData();
-  }
-
-  Widget getBody() {
-    bool showLoadingDialog = widgets.isEmpty;
-    if (showLoadingDialog) {
-      return getProgressDialog();
-    } else {
-      return getListView();
-    }
-  }
-
-  Widget getProgressDialog() {
-    return const Center(child: CircularProgressIndicator());
-  }
+class Login extends StatelessWidget {
+  const Login({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sample App'),
+      backgroundColor: AppColors.loginColor,
+      /* appBar: AppBar(
+        title: const Text('Welcome'),
+      ),*/
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Welcome',
+              style: TextStyle(
+                  color: Colors.red, fontSize: 36, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            /*Image.network(
+                'https://file3.qdnd.vn/data/images/0/2022/11/15/hieu_tv/messi%201.jpg'),*/
+            Image.asset('images/login.png'),
+            const SizedBox(
+              height: 20.0,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (BuildContext context) {
+                  return const HomePage();
+                }));
+              },
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.red,
+                  minimumSize: const Size(300, 48),
+                  shape: const StadiumBorder()),
+              child: const Text('Login'),
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(300, 48),
+                  shape: const StadiumBorder()),
+              child: const Text('Register'),
+            )
+          ],
+        ),
       ),
-      body: getBody(),
     );
-  }
-
-  ListView getListView() {
-    return ListView.builder(
-      itemCount: widgets.length,
-      itemBuilder: (context, position) {
-        return getRow(position);
-      },
-    );
-  }
-
-  Widget getRow(int i) {
-    return GestureDetector(
-        onTap: () {
-          Fluttertoast.showToast(
-              msg: "Onclick Item",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Text("Row ${widgets[i]["title"]}"),
-        ));
-  }
-
-  Future<void> loadData() async {
-    ReceivePort receivePort = ReceivePort();
-    await Isolate.spawn(dataLoader, receivePort.sendPort);
-
-    // The 'echo' isolate sends its SendPort as the first message.
-    SendPort sendPort = await receivePort.first;
-
-    List msg = await sendReceive(
-      sendPort,
-      'https://jsonplaceholder.typicode.com/posts',
-    );
-
-    setState(() {
-      widgets = msg;
-    });
-  }
-
-  // The entry point for the isolate.
-  static Future<void> dataLoader(SendPort sendPort) async {
-    // Open the ReceivePort for incoming messages.
-    ReceivePort port = ReceivePort();
-
-    // Notify any other isolates what port this isolate listens to.
-    sendPort.send(port.sendPort);
-
-    await for (var msg in port) {
-      String data = msg[0];
-      SendPort replyTo = msg[1];
-
-      String dataURL = data;
-      http.Response response = await http.get(Uri.parse(dataURL));
-      // Lots of JSON to parse
-      replyTo.send(jsonDecode(response.body));
-    }
-  }
-
-  Future sendReceive(SendPort port, msg) {
-    ReceivePort response = ReceivePort();
-    port.send([msg, response.sendPort]);
-    return response.first;
   }
 }
