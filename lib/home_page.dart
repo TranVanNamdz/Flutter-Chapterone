@@ -1,9 +1,17 @@
+import 'package:chapter_one/descriptions_page.dart';
+import 'package:chapter_one/main.dart';
+import 'package:chapter_one/money_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   void onCLickHowGetToRich() {
     Fluttertoast.showToast(
         msg: 'Message from TVN',
@@ -13,8 +21,49 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color bgColor = Colors.yellow;
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: bgColor,
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  bgColor = Colors.cyanAccent;
+                });
+              },
+              icon: const Icon(Icons.color_lens))
+        ],
+      ),
+      drawer: SafeArea(
+        child: Drawer(
+          child: Column(
+            children: [
+              const DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                  ),
+                  child: ListTile(
+                    title: Text('Flutter Map'),
+                  )),
+              const ListTile(
+                leading: Icon(Icons.settings),
+                title: Text('Setting'),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (BuildContext context) {
+                    return const MyApp();
+                  }));
+                },
+                leading: Icon(Icons.logout_sharp),
+                title: const Text('Log out'),
+              )
+            ],
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -28,7 +77,12 @@ class HomePage extends StatelessWidget {
                         backgroundColor: Colors.redAccent,
                         foregroundColor: Colors.white,
                         shape: const StadiumBorder()),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (BuildContext context) {
+                        return const Money();
+                      }));
+                    },
                     child: const Text('Money'),
                   ),
                   ElevatedButton(
@@ -97,7 +151,10 @@ class HomePage extends StatelessWidget {
               onTap: () {
                 Navigator.of(context)
                     .push(MaterialPageRoute(builder: (BuildContext context) {
-                  return Container();
+                  return const DescriptionPage(
+                    title: 'How to love',
+                    imagePath: 'images/login.png',
+                  );
                 }));
               },
               child: Container(
