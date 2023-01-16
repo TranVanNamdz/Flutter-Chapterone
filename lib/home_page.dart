@@ -1,6 +1,7 @@
 import 'package:chapter_one/descriptions_page.dart';
 import 'package:chapter_one/main.dart';
 import 'package:chapter_one/money_page.dart';
+import 'package:chapter_one/touris_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -12,6 +13,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Color bgColor = Colors.yellow;
+
   void onCLickHowGetToRich() {
     Fluttertoast.showToast(
         msg: 'Message from TVN',
@@ -21,7 +24,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Color bgColor = Colors.yellow;
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
@@ -90,7 +92,12 @@ class _HomePageState extends State<HomePage> {
                         backgroundColor: Colors.redAccent,
                         foregroundColor: Colors.white,
                         shape: const StadiumBorder()),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (BuildContext context) {
+                        return const TravelPage();
+                      }));
+                    },
                     child: const Text('Girl'),
                   ),
                   ElevatedButton(

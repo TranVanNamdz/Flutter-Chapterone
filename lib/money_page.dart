@@ -21,16 +21,16 @@ class MoneyPage extends StatefulWidget {
 }
 
 class _MoneyPageState extends State<MoneyPage> {
+  int count = 1;
+
+  void _countNumber() {
+    setState(() {
+      count = count + 1;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    int count = 1;
-
-    void _countNumber() {
-      setState(() {
-        count++;
-      });
-    }
-
     return Scaffold(
       body: Container(
         margin: const EdgeInsets.all(9),
@@ -45,7 +45,7 @@ class _MoneyPageState extends State<MoneyPage> {
                 child: const Text('Click me'),
               ),
               const SizedBox(height: 28),
-              Text('Count: $count')
+              Text('Count: $count'),
             ],
           ),
         ),
